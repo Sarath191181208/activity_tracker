@@ -5,12 +5,11 @@
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
+  width: 100%;
+
   display: flex;
-  /* Use flexbox to align items */
   justify-content: space-between;
-  /* Space between items */
   align-items: center;
-  /* Center items vertically */
 }
 
 .navbar i {

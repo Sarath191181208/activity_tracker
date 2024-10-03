@@ -106,7 +106,7 @@
     }
 
     button:hover {
-      background-color: #982ca3;
+      background-color: #4a2cca;
     }
   </style>
 </head>
@@ -165,6 +165,13 @@
 
         activities.push(newActivity);
         localStorage.setItem("activities", JSON.stringify(activities));
+        
+        // clear all the input fields 
+        document.getElementById("title").value = ""; 
+        document.getElementById("showup").value = ""; 
+        document.getElementById("easy").value = "";
+        document.getElementById("medium").value = "";
+        document.getElementById("hard").value = "";
       });
   </script>
 </body>

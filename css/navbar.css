@@ -1,0 +1,49 @@
+.navbar {
+  background-color: #1e1e2f;
+  color: #e0e0e0;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+  display: flex;
+  /* Use flexbox to align items */
+  justify-content: space-between;
+  /* Space between items */
+  align-items: center;
+  /* Center items vertically */
+}
+
+.navbar i {
+  margin-left: 60px;
+  cursor: pointer;
+  color: #6a4cea;
+  transition: color 0.3s;
+  font-size: 24px;
+}
+
+.navbar i:hover {
+  color: #4a2cca;
+}
+
+.add-activity-button {
+  margin-left: auto;
+  background-color: #7a5cfa;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.add-activity-button:hover {
+  background-color: #6a4cea;
+}
+
+.add-icon {
+  margin-right: 8px;
+  font-size: 20px;
+}

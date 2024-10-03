@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dark Theme Calendar</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link rel="stylesheet" type="" href="css/navbar.css" />
+  <link rel="stylesheet" type="" href="css/table.css" />
+  <link rel="stylesheet" type="" href="css/custom-scrollbar.css" />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1e1e2f;
+      color: #f1f1f1;
+      margin: 0;
+      padding: 0;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .container {
+      width: 100%;
+      min-height: 80vh;
+      display: grid;
+      place-items: center;
+      align-items: center;
+    }
+
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+      background-color: #2a2a40;
+      border-radius: 10px;
+      box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .calendar-day,
+    .calendar-day-header {
+      padding: 10px;
+      text-align: center;
+      border-radius: 8px;
+    }
+
+    .calendar-day-header {
+      font-weight: bold;
+      background-color: #3a3a55;
+      color: #a1a1b9;
+    }
+
+    .calendar-day {
+      background-color: #29293f;
+      position: relative;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .calendar-day:hover {
+      background-color: #3d3d57;
+    }
+
+    .dots {
+      position: absolute;
+      bottom: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 2px;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      background-color: #ff6b6b;
+      border-radius: 50%;
+    }
+
+    .no-activity {
+      color: #7a7a94;
+    }
+
+    @media (max-width: 400px) {
+      .calendar {
+        grid-template-columns: repeat(7, 1fr);
+        gap: 8px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="navbar">
+    <div class="icon-container">
+      <a href="index.html" title="Home"><i class="fas fa-home"></i></a>
+      <a href="calender.html" title="Calendar"><i class="fas fa-calendar"></i></a>
+    </div>
+
+    <button class="add-activity-button" onclick="window.location.href='add_activity.html">
+      <span class="add-icon">➕</span> Add Activity
+    </button>
+  </div>
+
+  <div class="container">
+    <div class="calendar" id="calendar">
+      <!-- Days will be generated here -->
+    </div>
+  </div>
+
+  <script>
+    // Helper function to format date in DD-MM-YYYY
+    function formatDate(date) {
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+      const year = date.getFullYear();
+      return `${day}-${month}-${year}`;
+    }
+
+    // Create a calendar for the current month
+    function createCalendar() {
+      const calendarElement = document.getElementById("calendar");
+      const today = new Date();
+      const currentMonth = today.getMonth();
+      const currentYear = today.getFullYear();
+      const daysInMonth = new Date(
+        currentYear,
+        currentMonth + 1,
+        0,
+      ).getDate();
+
+      // Clear existing calendar content
+      calendarElement.innerHTML = "";
+
+      // Generate headers for the week
+      const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      daysOfWeek.forEach((day) => {
+        const header = document.createElement("div");
+        header.textContent = day;
+        header.className = "calendar-day-header";
+        calendarElement.appendChild(header);
+      });
+
+      // Generate days for the current month
+      for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(currentYear, currentMonth, day);
+        const formattedDate = formatDate(date);
+        const activitiesForDay =
+          JSON.parse(localStorage.getItem(formattedDate)) || [];
+
+        if (activitiesForDay.length > 0) {
+          console.log(activitiesForDay);
+        }
+
+        const dayElement = document.createElement("div");
+        dayElement.className = "calendar-day";
+        dayElement.textContent = day;
+
+        if (activitiesForDay.length > 0) {
+          const dotsContainer = document.createElement("div");
+          dotsContainer.className = "dots";
+
+          // Add one dot per activity
+          activitiesForDay.forEach(() => {
+            const dot = document.createElement("div");
+            dot.className = "dot";
+            dotsContainer.appendChild(dot);
+          });
+
+          dayElement.appendChild(dotsContainer);
+        } else {
+          dayElement.classList.add("no-activity");
+        }
+
+        calendarElement.appendChild(dayElement);
+      }
+    }
+
+    createCalendar();
+  </script>
+</body>
+
+</html>

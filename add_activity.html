@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Activity Tracker - Dark Theme</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link rel="stylesheet" type="" href="css/navbar.css" />
+  <link rel="stylesheet" type="" href="css/table.css" />
+  <link rel="stylesheet" type="" href="css/custom-scrollbar.css" />
+
+  <style>
+    /* Dark Theme Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #1e1e2f;
+      /* Updated background color */
+      color: #e0e0e0;
+      /* Light text for contrast */
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .card {
+      background: #1e1e2f;
+      /* Card background remains the same */
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      max-width: 400px;
+      width: 100%;
+      border: 1px solid #333;
+      /* Border to separate from background */
+    }
+
+    .card input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+      background-color: transparent;
+      color: #ffffff;
+      border: none;
+      outline: none;
+    }
+
+    #title {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .card input[type="text"]:focus {
+      outline: none;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      color: #bdbdbd;
+      /* Softer light text for labels */
+    }
+
+    .form-group input {
+      width: 100%;
+      font-size: 18px;
+      padding: 10px;
+      box-sizing: border-box;
+      background-color: #2e2e42;
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+    }
+
+    .form-group button {
+      /*border: 2px solid #6a4cea;*/
+      background: #6a4cea;
+      border: none;
+
+      max-width: 150px;
+      align-self: center;
+      color: white;
+      padding: 10px;
+      border-radius: 6px;
+      width: 100%;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+      margin-top: 24px;
+    }
+
+    button:hover {
+      background-color: #982ca3;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="navbar">
+    <div class="icon-container">
+      <a href="index.html" title="Home"><i class="fas fa-home"></i></a>
+      <a href="calender.html" title="Calendar"><i class="fas fa-calendar"></i></a>
+    </div>
+
+    <button class="add-activity-button" onclick="window.location.href='add_activity.html">
+      <span class="add-icon">➕</span> Add Activity
+    </button>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <input type="text" id="title" placeholder="Enter Activity Title" />
+      <!-- Editable title input -->
+      <div class="form-group">
+        <input type="text" id="showup" placeholder="Showup (10-20)mins" />
+        <input type="text" id="easy" placeholder="Easy (30min-1hr)" />
+        <input type="text" id="medium" placeholder="Medium (1hr-2hr)" />
+        <input type="text" id="hard" placeholder="Hard (2hr-5hr)" />
+        <button id="saveButton">Save Activity</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document
+      .getElementById("saveButton")
+      .addEventListener("click", function () {
+        const title = document.getElementById("title").value;
+        const showup = document.getElementById("showup").value;
+        const easy = document.getElementById("easy").value;
+        const medium = document.getElementById("medium").value;
+        const hard = document.getElementById("hard").value;
+        const id = Date.now();
+
+        // Get current activities list or initialize a new one
+        let activities = JSON.parse(localStorage.getItem("activities")) || [];
+
+        // Create new activity object and add to list
+        const newActivity = {
+          id,
+          title,
+          showup,
+          easy,
+          medium,
+          hard,
+          streak: 1,
+          lastUpdated: new Date().toISOString(),
+        };
+
+        activities.push(newActivity);
+        localStorage.setItem("activities", JSON.stringify(activities));
+      });
+  </script>
+</body>
+
+</html>

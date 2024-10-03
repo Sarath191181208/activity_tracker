@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Activity Tracker - Show Activities</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link rel="stylesheet" type="" href="css/navbar.css" />
+  <link rel="stylesheet" type="" href="css/table.css" />
+  <link rel="stylesheet" type="" href="css/custom-scrollbar.css" />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #1e1e2f;
+      color: #e0e0e0;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #ffffff;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="navbar">
+    <div class="icon-container">
+      <a href="index.html" title="Home"><i class="fas fa-home"></i></a>
+      <a href="calender.html" title="Calendar"><i class="fas fa-calendar"></i></a>
+    </div>
+
+    <button class="add-activity-button" onclick="window.location.href='add_activity.html'">
+      <span class="add-icon">➕</span> Add Activity
+    </button>
+  </div>
+
+  <div class="container">
+    <h2>Activities</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Activity</th>
+          <th>Show Up</th>
+          <th>Easy</th>
+          <th>Medium</th>
+          <th>Hard</th>
+          <th>Streak</th>
+          <th>Last Updated</th>
+        </tr>
+      </thead>
+      <tbody id="activityTable">
+        <!-- Dynamic rows will be inserted here -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const activities = JSON.parse(localStorage.getItem("activities")) || [];
+    const activityTable = document.getElementById("activityTable");
+
+    function isUpdatedToday(lastUpdated) {
+      if (!lastUpdated) return false;
+      const lastDate = new Date(lastUpdated);
+      const today = new Date();
+
+      return (
+        lastDate.getFullYear() === today.getFullYear() &&
+        lastDate.getMonth() === today.getMonth() &&
+        lastDate.getDate() === today.getDate()
+      );
+    }
+
+    function clearTable() {
+      activityTable.innerHTML = "";
+    }
+
+    function render() {
+      activities.forEach((activity, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+               <td>${activity.title}</td>
+               <td>
+                 <div class="checkbox-container">
+                   <input type="checkbox" data-index="${index}" data-type="showup" ${activity.checked === "showup" ? "checked" : ""}>
+                   <span class="custom-checkbox"></span>
+                 </div>
+                 <span class="checkbox-bottom-text"> ${activity.showup} </span>
+               </td>
+               <td>
+                 <div class="checkbox-container">
+                   <input type="checkbox" data-index="${index}" data-type="easy" ${activity.checked === "easy" ? "checked" : ""}>
+                   <span class="custom-checkbox"></span>
+                 </div>
+                 <span class="checkbox-bottom-text"> ${activity.easy} </span>
+               </td>
+               <td>
+                 <div class="checkbox-container">
+                   <input type="checkbox" data-index="${index}" data-type="medium" ${activity.checked === "medium" ? "checked" : ""}>
+                   <span class="custom-checkbox"></span>
+                 </div>
+                 <span class="checkbox-bottom-text"> ${activity.medium} </span>
+               </td>
+               <td>
+                 <div class="checkbox-container">
+                   <input type="checkbox" data-index="${index}" data-type="hard" ${activity.checked === "hard" ? "checked" : ""}>
+                   <span class="custom-checkbox"></span>
+                 </div>
+                 <span class="checkbox-bottom-text"> ${activity.hard} </span>
+               </td>
+               <td class="streak-info">
+                 <div class="streak-container">
+                   <div class="fire-emoji">🔥</div>
+                   <div class="streak-number">${activity.streak}</div>
+                 </div>
+               </td>
+               <td class="last-updated">${formatLastUpdated(activity.lastUpdated) || "Never"}</td>
+             `;
+        activityTable.appendChild(row);
+      });
+    }
+
+    activityTable.addEventListener("change", (event) => {
+      if (
+        event.target.tagName === "INPUT" &&
+        event.target.type === "checkbox"
+      ) {
+        const index = event.target.dataset.index;
+
+        if (!isUpdatedToday(activities[index].lastUpdated)) {
+          activities[index].streak++;
+        }
+
+        const checkboxes = event.target
+          .closest("tr")
+          .querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach((checkbox) => {
+          if (checkbox !== event.target) checkbox.checked = false;
+        });
+
+        activities[index].lastUpdated = new Date().toISOString();
+
+        if (event.target.checked) {
+          activities[index]["checked"] = event.target.dataset.type;
+        } else {
+          activities[index]["checked"] = null;
+        }
+
+        localStorage.setItem("activities", JSON.stringify(activities));
+        updateCalendar();
+
+        clearTable();
+        render();
+      }
+    });
+
+    render();
+
+    function formatLastUpdated(lastUpdated) {
+      const now = new Date();
+      const updatedTime = new Date(lastUpdated);
+      const diffInMs = now - updatedTime; // Difference in milliseconds
+      const diffInMins = Math.floor(diffInMs / (1000 * 60)); // Convert to minutes
+      const diffInHours = Math.floor(diffInMins / 60); // Convert to hours
+      const diffInDays = Math.floor(diffInHours / 24); // Convert to days
+
+      if (diffInMins < 10) {
+        return `${diffInMins} mins ago`;
+      } else if (diffInMins < 20) {
+        return `15 mins ago`; // Display fixed value for this range
+      } else if (diffInMins < 30) {
+        return `30 mins ago`; // Display fixed value for this range
+      } else if (diffInHours < 1) {
+        return `${diffInMins} mins ago`;
+      } else if (diffInHours < 24) {
+        return `${diffInHours} hrs ago`;
+      }
+      return `${diffInDays} days ago`;
+    }
+
+    function formatDate(date) {
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+      const year = date.getFullYear();
+      return `${day}-${month}-${year}`;
+    }
+
+    function updateCalendar() {
+      const date = formatDate(new Date()); // Get today's date in DD-MM-YYYY format
+      const existingActivities = JSON.parse(localStorage.getItem(date)) || []; // Retrieve existing activities for today
+
+      // Clear existing activities for today to update with new states
+      existingActivities.length = 0;
+
+      // Loop through the activities and push the updated states to the calendar
+      activities.forEach((activity) => {
+        if (activity.checked) {
+          // Only save activities that have a checked state
+          existingActivities.push({
+            activity_id: activity.id,
+            checked_value: activity.checked, // Store the checked value
+          });
+        }
+      });
+
+      console.log(existingActivities);
+
+      // Save the updated array back to local storage for the date
+      localStorage.setItem(date, JSON.stringify(existingActivities));
+    }
+  </script>
+</body>
+
+</html>
